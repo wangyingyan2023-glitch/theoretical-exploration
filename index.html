@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远程教育理论探索 · 完整交互学习平台</title>
+    <style>
+        :root {
+            --bg-deep: #060d1f; --bg-dark: #0a1628; --bg-mid: #0d2137;
+            --blue-deep: #0d2137; --blue-mid: #1a3a5c; --blue-light: #1e5799;
+            --blue-bright: #2989d8; --blue-accent: #4a9eff; --blue-glow: #6bb5ff;
+            --blue-pale: #a8d4ff; --text-white: #f0f7ff; --text-light: #c8dff5;
+            --text-muted: #8ab4d8; --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12); --card-radius: 18px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+            --color-distance: #3b82f6; --color-learning: #8b5cf6;
+            --color-instructional: #06b6d4; --color-community: #f59e0b;
+            --color-correct: #22c55e; --color-wrong: #ef4444;
+            --sidebar-width: 220px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-sans);
+            background: linear-gradient(160deg, #060d1f 0%, #0a1628 20%, #0d2137 40%, #122b4a 60%, #0d2137 80%, #060d1f 100%);
+            color: var(--text-white); min-height: 100vh; overflow-x: hidden;
+            position: relative; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .particles-container { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; transition:opacity .5s; }
+        .particles-container.hidden { opacity:0; pointer-events:none; }
+        .particle { position:absolute; border-radius:50%; background:radial-gradient(circle, rgba(107,181,255,.5), rgba(74,158,255,.2) 40%, transparent 70%); animation:floatParticle 12s ease-in-out infinite; }
+        .particle:nth-child(1){width:8px;height:8px;left:5%;top:15%;animation-duration:10s;opacity:.45;}
+        .particle:nth-child(2){width:12px;height:12px;left:15%;top:60%;animation-duration:14s;animation-delay:1s;opacity:.35;}
+        .particle:nth-child(3){width:6px;height:6px;left:25%;top:30%;animation-duration:9s;animation-delay:2s;opacity:.5;}
+        .particle:nth-child(4){width:10px;height:10px;left:35%;top:75%;animation-duration:16s;opacity:.3;}
+        .particle:nth-child(5){width:7px;height:7px;left:45%;top:20%;animation-duration:11s;animation-delay:3s;opacity:.4;}
+        .particle:nth-child(6){width:14px;height:14px;left:55%;top:50%;animation-duration:18s;opacity:.25;}
+        .particle:nth-child(7){width:5px;height:5px;left:65%;top:10%;animation-duration:8s;opacity:.5;}
+        .particle:nth-child(8){width:9px;height:9px;left:75%;top:40%;animation-duration:13s;opacity:.35;}
+        .particle:nth-child(9){width:11px;height:11px;left:85%;top:70%;animation-duration:15s;opacity:.3;}
+        .particle:nth-child(10){width:6px;height:6px;left:92%;top:25%;animation-duration:10s;opacity:.45;}
+        @keyframes floatParticle{0%,100%{transform:translateY(0) scale(1);opacity:.35;}25%{transform:translateY(-35px) scale(1.15);opacity:.55;}50%{transform:translateY(-60px) scale(.9);opacity:.3;}75%{transform:translateY(-25px) scale(1.05);opacity:.5;}}
+        .glow-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);animation:glowPulse 6s ease-in-out infinite;}
+        .glow-orb-1{width:400px;height:400px;background:rgba(30,87,153,.25);top:-100px;left:-100px;}
+        .glow-orb-2{width:500px;height:500px;background:rgba(10,22,40,.5);bottom:-150px;right:-150px;animation-delay:3s;}
+        .glow-orb-3{width:300px;height:300px;background:rgba(41,137,216,.2);top:40%;left:60%;animation-delay:1.5s;}
+        @keyframes glowPulse{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.15);opacity:1;}}
+
+        .login-section{position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;display:flex;align-items:center;justify-content:center;background:rgba(6,13,31,.97);backdrop-filter:blur(10px);transition:opacity .6s,visibility .6s;}
+        .login-section.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+        .login-card{background:linear-gradient(160deg,rgba(18,43,74,.95),rgba(10,22,40,.98));border:1px solid var(--glass-border);border-radius:24px;padding:40px 36px;width:90%;max-width:420px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+        .login-card h2{font-size:1.7rem;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,#fff,#4a9eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .login-card p{font-size:.9rem;color:var(--text-muted);margin-bottom:24px;}
+        .login-input-group{margin-bottom:16px;text-align:left;}
+        .login-input-group label{font-size:.8rem;font-weight:600;color:var(--text-light);display:block;margin-bottom:6px;}
+        .login-input-group input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,.08);color:var(--text-white);font-size:.95rem;font-family:var(--font-sans);outline:none;}
+        .login-input-group input:focus{border-color:var(--blue-accent);box-shadow:0 0 20px rgba(74,158,255,.2);}
+        .btn-login{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue-bright),var(--blue-accent));color:#fff;font-size:1rem;font-weight:700;letter-spacing:1px;transition:all .3s;font-family:var(--font-sans);margin-top:8px;box-shadow:0 4px 20px rgba(41,137,216,.4);}
+        .btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(41,137,216,.5);}
+        .login-error{color:var(--color-wrong);font-size:.8rem;margin-top:10px;min-height:20px;}
+
+        .app-layout{display:flex;min-height:100vh;position:relative;z-index:1;}
+        .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:rgba(6,13,31,.92);backdrop-filter:blur(18px);border-right:1px solid var(--glass-border);z-index:100;display:flex;flex-direction:column;padding:20px 14px;overflow-y:auto;transition:transform .4s;}
+        .sidebar-brand{display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:700;color:var(--text-white);margin-bottom:24px;padding:6px 8px;user-select:none;cursor:default;}
+        .sidebar-brand .brand-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--blue-bright),var(--blue-accent));display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+        .sidebar-nav{display:flex;flex-direction:column;gap:6px;flex:1;}
+        .sidebar-btn{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid transparent;color:var(--text-muted);cursor:pointer;font-size:.85rem;font-weight:600;transition:all .3s;font-family:var(--font-sans);text-align:left;white-space:nowrap;}
+        .sidebar-btn:hover{background:rgba(255,255,255,.1);color:var(--text-white);}
+        .sidebar-btn.active{background:linear-gradient(135deg,rgba(41,137,216,.3),rgba(30,87,153,.2));border-color:rgba(74,158,255,.4);color:var(--blue-pale);}
+        .sidebar-btn .icon{font-size:1.1rem;}
+        .sidebar-user{margin-top:12px;padding:12px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center;font-size:.7rem;color:var(--text-muted);}
+        .sidebar-user strong{color:var(--blue-pale);font-size:.8rem;display:block;margin-bottom:2px;}
+
+        .main-content{margin-left:var(--sidebar-width);flex:1;padding:20px 28px;position:relative;z-index:1;}
+        .main-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--glass-border);}
+        .main-header h1{font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#4a9eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+        .search-container{display:flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid var(--glass-border);border-radius:99px;padding:4px 12px;transition:all .3s;width:200px;max-width:200px;}
+        .search-container:focus-within{border-color:rgba(74,158,255,.5);box-shadow:0 0 20px rgba(74,158,255,.2);background:rgba(255,255,255,.12);width:250px;max-width:250px;}
+        .search-icon{font-size:1rem;margin-right:6px;opacity:.7;}
+        .search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text-white);font-size:.85rem;padding:6px 0;font-family:var(--font-sans);min-width:0;}
+        .search-input::placeholder{color:var(--text-muted);opacity:.6;}
+        .search-clear{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;display:none;}
+        .search-clear.visible{display:block;}
+        .btn-reset,.btn-particle-toggle{background:rgba(255,255,255,.08);border:1px solid var(--glass-border);color:var(--text-light);padding:7px 14px;border-radius:99px;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .3s;font-family:var(--font-sans);white-space:nowrap;}
+        .btn-reset:hover,.btn-particle-toggle:hover{background:rgba(255,255,255,.15);color:var(--text-white);}
+        .btn-particle-toggle.active{background:rgba(74,158,255,.2);border-color:rgba(74,158,255,.4);color:var(--blue-pale);}
+
+        .stats-bar{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;}
+        .stat-card{flex:1;min-width:120px;background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:14px;padding:14px 18px;text-align:center;}
+        .stat-card .stat-value{font-size:1.6rem;font-weight:800;color:var(--blue-accent);}
+        .stat-card .stat-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+
+        .panel{display:none;animation:fadeInUp .4s ease both;}
+        .panel.active{display:block;}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+        .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;perspective:1200px;}
+        .card-wrapper{animation:fadeInUp .5s ease both;}
+        .card-wrapper.hidden-card{display:none;}
+        .card-wrapper.learned .card-front .learned-badge{opacity:1;transform:translateX(-50%) scale(1);}
+        .card{position:relative;width:100%;height:360px;cursor:pointer;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);border-radius:var(--card-radius);will-change:transform;}
+        .card.flipped{transform:rotateY(180deg);}
+        .card:hover:not(.flipped){transform:translateY(-4px);}
+        .card-front,.card-back{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--card-radius);overflow:hidden;border:1px solid var(--glass-border);box-shadow:0 8px 25px rgba(0,0,0,.25);}
+        .category-stripe{position:absolute;top:0;left:0;right:0;height:4px;z-index:3;}
+        .card-wrapper[data-category="distance"] .category-stripe{background:var(--color-distance);}
+        .card-wrapper[data-category="learning"] .category-stripe{background:var(--color-learning);}
+        .card-wrapper[data-category="instructional"] .category-stripe{background:var(--color-instructional);}
+        .card-wrapper[data-category="community"] .category-stripe{background:var(--color-community);}
+        .card-front{background:linear-gradient(160deg,rgba(18,43,74,.92),rgba(10,22,40,.98));display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 16px;text-align:center;position:relative;}
+        .card-front::before{content:'';position:absolute;top:4px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue-accent),var(--blue-glow),var(--blue-accent),transparent);opacity:.7;z-index:2;}
+        .card-number{position:absolute;top:12px;left:14px;font-size:.68rem;font-weight:700;color:var(--text-muted);}
+        .card-category-badge{position:absolute;top:10px;right:10px;font-size:.58rem;font-weight:600;padding:3px 8px;border-radius:99px;background:rgba(41,137,216,.2);color:var(--blue-pale);border:1px solid rgba(41,137,216,.3);}
+        .card-icon{font-size:2.5rem;margin-bottom:10px;filter:drop-shadow(0 4px 12px rgba(74,158,255,.4));}
+        .card-title{font-size:1rem;font-weight:700;color:var(--text-white);margin-bottom:3px;}
+        .card-author{font-size:.75rem;color:var(--text-muted);font-weight:500;}
+        .card-tagline{font-size:.7rem;color:var(--text-light);margin-top:8px;opacity:.8;line-height:1.4;}
+        .learned-badge{position:absolute;bottom:10px;left:50%;transform:translateX(-50%) scale(0);background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:99px;font-size:.62rem;font-weight:700;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:2;}
+        .card-back{background:linear-gradient(160deg,#f8fbff,#e8f0fa 40%,#d4e4f5);transform:rotateY(180deg);display:flex;flex-direction:column;padding:16px 14px;color:#1a2a3a;overflow-y:auto;scrollbar-width:thin;}
+        .card-back-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+        .card-back-header .back-icon{font-size:1.4rem;}
+        .card-back-header .back-title{font-size:.9rem;font-weight:700;color:#0d2137;}
+        .card-back-header .back-author{font-size:.68rem;color:#4a6a8a;}
+        .card-back-description{font-size:.72rem;color:#2a3a4a;line-height:1.5;margin-bottom:8px;}
+        .card-back-concepts{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+        .concept-tag{background:rgba(30,87,153,.1);border:1px solid rgba(30,87,153,.2);color:#1e5799;font-size:.62rem;font-weight:600;padding:3px 7px;border-radius:99px;}
+        .card-back-application{font-size:.68rem;color:#3a5a7a;line-height:1.4;font-style:italic;border-left:3px solid var(--blue-accent);padding-left:8px;margin-bottom:6px;}
+        .card-back-study-time{font-size:.65rem;color:#4a6a8a;background:rgba(255,255,255,.5);border-radius:6px;padding:4px 8px;margin-bottom:6px;}
+        .btn-view-detail,.btn-mark-learned{padding:6px 12px;border-radius:99px;cursor:pointer;font-size:.65rem;font-weight:700;font-family:var(--font-sans);border:none;margin-bottom:4px;transition:all .3s;display:inline-block;}
+        .btn-view-detail{background:linear-gradient(135deg,var(--blue-bright),var(--blue-accent));color:#fff;}
+        .btn-view-detail:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(41,137,216,.4);}
+        .btn-mark-learned{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;}
+        .btn-mark-learned:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(34,197,94,.4);}
+        .btn-mark-learned:disabled{background:#6b7280;cursor:not-allowed;transform:none;}
+        .card-back-note textarea{width:100%;background:rgba(255,255,255,.7);border:1px solid rgba(30,87,153,.25);border-radius:6px;padding:6px 8px;font-size:.68rem;font-family:var(--font-sans);color:#1a2a3a;resize:vertical;min-height:35px;}
+        .btn-save-note{background:linear-gradient(135deg,var(--blue-bright),var(--blue-accent));border:none;color:#fff;padding:4px 10px;border-radius:99px;cursor:pointer;font-size:.62rem;font-weight:700;font-family:var(--font-sans);margin-top:3px;}
+        .note-saved-indicator{font-size:.62rem;color:#22c55e;opacity:0;transition:opacity .4s;display:inline-block;margin-left:6px;}
+        .note-saved-indicator.show{opacity:1;}
+
+        /* 匹配挑战布局 */
+        .match-layout { display: flex; gap: 20px; align-items: flex-start; }
+        .match-main { flex: 2; }
+        .match-record { flex: 1; min-width: 220px; background: rgba(255,255,255,.06); border: 1px solid var(--glass-border); border-radius: 14px; padding: 16px; }
+        .match-record h3 { font-size: 1rem; font-weight: 700; color: var(--blue-pale); margin-bottom: 12px; text-align: center; }
+        .match-record-list { display: flex; flex-direction: column; gap: 8px; }
+        .match-record-item { background: rgba(255,255,255,.04); border-radius: 8px; padding: 8px 12px; font-size: .8rem; display: flex; justify-content: space-between; align-items: center; }
+        .match-record-item .theory { color: var(--text-white); font-weight: 600; }
+        .match-record-item .author { color: var(--text-muted); }
+        .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px;}
+        .match-column-title{font-size:.85rem;font-weight:700;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px;}
+        .match-item{background:rgba(255,255,255,.07);border:1px solid var(--glass-border);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text-white);transition:all .3s;user-select:none;margin-bottom:8px;}
+        .match-item:hover{background:rgba(255,255,255,.14);}
+        .match-item.selected{background:rgba(74,158,255,.3);border-color:var(--blue-accent);box-shadow:0 0 18px rgba(74,158,255,.3);}
+        .match-item.matched{background:rgba(34,197,94,.25);border-color:var(--color-correct);color:#4ade80;pointer-events:none;opacity:.75;}
+        .match-item.wrong{background:rgba(239,68,68,.25);border-color:var(--color-wrong);animation:shake .5s ease;}
+        @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+        .match-score-bar{font-size:.9rem;font-weight:600;color:var(--blue-pale);margin-bottom:14px;padding:10px;background:rgba(74,158,255,.1);border-radius:12px;max-width:400px;}
+        .match-reset-btn{background:rgba(255,255,255,.1);border:1px solid var(--glass-border);color:var(--text-light);padding:8px 20px;border-radius:99px;cursor:pointer;font-size:.8rem;font-weight:600;font-family:var(--font-sans);margin-top:16px;}
+
+        .quiz-layout{display:flex;gap:24px;align-items:flex-start;}
+        .quiz-main{flex:2;}
+        .leaderboard{flex:1;min-width:240px;background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:16px;padding:16px;position:sticky;top:80px;}
+        .leaderboard h3{font-size:1rem;font-weight:700;color:var(--blue-pale);margin-bottom:12px;text-align:center;}
+        .leaderboard-item{background:rgba(255,255,255,.04);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;}
+        .leaderboard-item .rank{width:30px;height:30px;border-radius:50%;background:rgba(74,158,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue-accent);}
+        .leaderboard-item .score{font-weight:700;color:var(--text-white);}
+        .leaderboard-item .detail{font-size:.68rem;color:var(--text-muted);}
+        .quiz-container{max-width:100%;}
+        .quiz-question{background:rgba(255,255,255,.06);border:1px solid var(--glass-border);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+        .quiz-question-header{font-size:.88rem;font-weight:700;color:var(--text-white);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+        .quiz-question-number{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(74,158,255,.2);color:var(--blue-accent);font-size:.75rem;font-weight:700;flex-shrink:0;}
+        .quiz-options{display:flex;flex-direction:column;gap:5px;}
+        .quiz-option{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:.8rem;color:var(--text-light);transition:all .3s;text-align:left;font-family:var(--font-sans);}
+        .quiz-option:hover:not(.disabled){background:rgba(255,255,255,.12);color:var(--text-white);}
+        .quiz-option.correct{background:rgba(34,197,94,.25);border-color:var(--color-correct);color:#4ade80;}
+        .quiz-option.wrong{background:rgba(239,68,68,.2);border-color:var(--color-wrong);color:#fca5a5;}
+        .quiz-option.disabled{pointer-events:none;opacity:.7;}
+        .quiz-hint{font-size:.72rem;color:#f59e0b;margin-top:6px;padding:6px 10px;background:rgba(245,158,11,.1);border-radius:8px;display:none;}
+        .quiz-hint.show{display:block;}
+        .quiz-result-bar{text-align:center;font-size:1rem;font-weight:700;color:var(--blue-pale);padding:14px;background:rgba(74,158,255,.1);border-radius:12px;margin-top:14px;}
+        .quiz-reset-btn{display:block;margin:12px auto 0;background:rgba(255,255,255,.1);border:1px solid var(--glass-border);color:var(--text-light);padding:8px 20px;border-radius:99px;cursor:pointer;font-size:.8rem;font-weight:600;font-family:var(--font-sans);}
+        .timeline-horizontal-wrapper{overflow-x:auto;padding:20px 10px;position:relative;min-height:500px;}
+        .timeline-svg-container{position:relative;width:1200px;height:480px;margin:0 auto;}
+        .timeline-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+        .timeline-node-item{position:absolute;text-align:center;cursor:pointer;transform:translateX(-50%);z-index:2;}
+        .timeline-node-dot{width:20px;height:20px;border-radius:50%;background:var(--blue-accent);border:4px solid var(--blue-mid);box-shadow:0 0 15px rgba(74,158,255,.6);margin:0 auto 6px;}
+        .timeline-node-label{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border:1px solid var(--glass-border);border-radius:10px;padding:8px 12px;font-size:.75rem;font-weight:600;color:var(--text-white);white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+        .timeline-node-label .year{color:var(--blue-accent);font-weight:800;margin-right:4px;}
+        .timeline-node-detail{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:.7rem;color:var(--text-light);margin-top:4px;}
+        .timeline-node-item.expanded .timeline-node-detail{max-height:100px;}
+        /* 模态框 */
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+        .modal-overlay.show{display:flex;}
+        .modal-content{background:linear-gradient(160deg,#f8fbff,#e8f0fa);border-radius:20px;max-width:800px;width:90%;max-height:85vh;overflow-y:auto;padding:28px;color:#1a2a3a;position:relative;}
+        .modal-close{position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#4a6a8a;}
+        .modal-title{font-size:1.4rem;font-weight:800;color:#0d2137;margin-bottom:4px;}
+        .modal-author{font-size:.9rem;color:#4a6a8a;margin-bottom:14px;}
+        .modal-section{margin-bottom:14px;}
+        .modal-section h3{font-size:1.05rem;font-weight:700;color:#1e5799;margin-bottom:5px;border-left:4px solid var(--blue-accent);padding-left:8px;}
+        .modal-section p,.modal-section li{font-size:.85rem;line-height:1.6;}
+        .modal-video-link{display:inline-block;margin-top:6px;color:var(--blue-accent);text-decoration:underline;font-weight:600;}
+
+        /* 模态框中的交互式测验 */
+        .modal-quiz-question{background:rgba(30,87,153,.05);border:1px solid rgba(30,87,153,.15);border-radius:12px;padding:12px;margin-bottom:10px;}
+        .modal-quiz-question .q-text{font-weight:600;font-size:.85rem;margin-bottom:6px;}
+        .modal-quiz-options{display:flex;flex-direction:column;gap:5px;}
+        .modal-quiz-option{padding:6px 10px;background:rgba(255,255,255,.6);border:1px solid rgba(30,87,153,.2);border-radius:8px;cursor:pointer;font-size:.8rem;transition:all .2s;}
+        .modal-quiz-option:hover{background:rgba(255,255,255,.9);}
+        .modal-quiz-option.selected{background:rgba(74,158,255,.3);border-color:var(--blue-accent);}
+        .modal-quiz-option.correct{background:rgba(34,197,94,.3);border-color:var(--color-correct);}
+        .modal-quiz-option.wrong{background:rgba(239,68,68,.25);border-color:var(--color-wrong);}
+        .modal-quiz-feedback{font-size:.75rem;margin-top:4px;font-weight:600;}
+        .modal-quiz-feedback.correct{color:var(--color-correct);}
+        .modal-quiz-feedback.wrong{color:var(--color-wrong);}
+        .modal-quiz-submit{background:var(--blue-accent);border:none;color:#fff;padding:4px 12px;border-radius:99px;cursor:pointer;font-size:.7rem;font-weight:700;margin-top:4px;}
+
+        .completion-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:199;opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(6px);}
+        .completion-overlay.show{opacity:1;pointer-events:auto;}
+        .completion-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:200;background:linear-gradient(160deg,rgba(18,43,74,.97),rgba(13,33,55,.98));border:1px solid rgba(74,158,255,.4);border-radius:22px;padding:32px 36px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);transition:transform .5s cubic-bezier(.34,1.56,.64,1);max-width:400px;width:90%;}
+        .completion-banner.show{transform:translate(-50%,-50%) scale(1);}
+        .completion-banner .banner-icon{font-size:3rem;margin-bottom:10px;}
+        .completion-banner h2{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:6px;}
+        .completion-banner p{font-size:.82rem;color:var(--text-light);margin-bottom:4px;}
+        .completion-stats{display:flex;justify-content:center;gap:18px;margin-bottom:14px;}
+        .completion-stats .c-value{font-size:1.4rem;font-weight:800;color:var(--blue-accent);}
+        .btn-close-banner{background:linear-gradient(135deg,var(--blue-bright),var(--blue-accent));border:none;color:#fff;padding:8px 22px;border-radius:99px;cursor:pointer;font-size:.78rem;font-weight:700;}
+        @media (max-width:768px){:root{--sidebar-width:60px;}.sidebar{padding:12px 6px;}.sidebar-brand span{display:none;}.sidebar-btn span{display:none;}.sidebar-btn{justify-content:center;padding:10px;}.sidebar-btn .icon{font-size:1.3rem;}.sidebar-user{display:none;}.main-content{padding:16px 14px;}.cards-grid{grid-template-columns:1fr;}.match-layout{flex-direction:column;}.match-grid{grid-template-columns:1fr;}.quiz-layout{flex-direction:column;}.leaderboard{position:static;width:100%;}}
+    </style>
+</head>
+<body>
+    <!-- 登录页 -->
+    <div class="login-section" id="login-section">
+        <div class="login-card">
+            <h2>📚 远程教育理论探索</h2>
+            <p>请输入学号、姓名和小组开始学习</p>
+            <div class="login-input-group"><label for="student-id">学号</label><input type="text" id="student-id" placeholder="例如：20240001" autocomplete="off"></div>
+            <div class="login-input-group"><label for="student-name">姓名</label><input type="text" id="student-name" placeholder="例如：张三" autocomplete="off"></div>
+            <div class="login-input-group"><label for="student-group">小组</label><input type="text" id="student-group" placeholder="例如：第1组" autocomplete="off"></div>
+            <button class="btn-login" id="btn-login">进入学习</button>
+            <div class="login-error" id="login-error"></div>
+        </div>
+    </div>
+
+    <!-- 粒子背景 -->
+    <div class="particles-container" id="particles-container" aria-hidden="true">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    </div>
+    <div class="glow-orb glow-orb-1"></div><div class="glow-orb glow-orb-2"></div><div class="glow-orb glow-orb-3"></div>
+
+    <!-- 主布局 -->
+    <div class="app-layout" id="app-layout" style="display:none;">
+        <aside class="sidebar">
+            <div class="sidebar-brand"><div class="brand-icon">📚</div><span>远程教育理论</span></div>
+            <nav class="sidebar-nav">
+                <button class="sidebar-btn active" data-panel="cards"><span class="icon">📚</span><span>理论卡片</span></button>
+                <button class="sidebar-btn" data-panel="match"><span class="icon">🧩</span><span>匹配挑战</span></button>
+                <button class="sidebar-btn" data-panel="quiz"><span class="icon">📝</span><span>知识测验</span></button>
+                <button class="sidebar-btn" data-panel="timeline"><span class="icon">📅</span><span>时间线</span></button>
+                <button class="sidebar-btn" id="btn-random-sidebar"><span class="icon">🎲</span><span>随机复习</span></button>
+            </nav>
+            <div class="sidebar-user"><strong id="sidebar-user-name">未登录</strong><span id="sidebar-user-id"></span><span id="sidebar-user-group"></span></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="main-header">
+                <h1 id="main-title">📚 理论卡片</h1>
+                <div class="header-actions">
+                    <div class="search-container"><span class="search-icon">🔍</span><input type="text" class="search-input" id="search-input" placeholder="搜索理论..."><button class="search-clear" id="search-clear">✕</button></div>
+                    <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:.8rem;color:var(--text-muted);">已学 <span id="navbar-learned-count" style="color:var(--blue-accent);font-weight:700;">0</span>/9</span><div style="width:100px;height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;"><div id="navbar-progress-fill" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue-bright),var(--blue-accent));width:0%;transition:width .6s;"></div></div></div>
+                    <button class="btn-particle-toggle" id="btn-particle-toggle">✨ 粒子</button>
+                    <button class="btn-reset" id="btn-reset-nav">🔄 重置</button>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-card"><div class="stat-value" id="stat-learned">0</div><div class="stat-label">已学习</div></div>
+                <div class="stat-card"><div class="stat-value" id="stat-total-time">0s</div><div class="stat-label">总时长</div></div>
+                <div class="stat-card"><div class="stat-value" id="stat-percent">0%</div><div class="stat-label">完成度</div></div>
+            </div>
+
+            <!-- 理论卡片面板 -->
+            <div class="panel active" id="panel-cards">
+                <div class="cards-grid" id="cards-grid"></div>
+            </div>
+
+            <!-- 匹配挑战面板 -->
+            <div class="panel" id="panel-match">
+                <div class="match-layout">
+                    <div class="match-main">
+                        <div class="match-score-bar" id="match-score">匹配进度：0 / 9</div>
+                        <div class="match-grid">
+                            <div><div class="match-column-title">理论名称（拖拽）</div><div id="match-theories"></div></div>
+                            <div><div class="match-column-title">学者（放置区）</div><div id="match-authors"></div></div>
+                        </div>
+                        <button class="match-reset-btn" id="match-reset">🔄 重新开始</button>
+                    </div>
+                    <div class="match-record">
+                        <h3>✅ 匹配记录</h3>
+                        <div class="match-record-list" id="match-record-list">
+                            <p style="text-align:center;color:var(--text-muted);font-size:.8rem;">暂无匹配</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 知识测验面板 -->
+            <div class="panel" id="panel-quiz">
+                <div class="quiz-layout">
+                    <div class="quiz-main">
+                        <div class="quiz-container" id="quiz-container"></div>
+                        <div class="quiz-result-bar" id="quiz-result" style="display:none;"></div>
+                        <button class="quiz-reset-btn" id="quiz-reset" style="display:none;">🔄 重新答题</button>
+                    </div>
+                    <div class="leaderboard" id="leaderboard"></div>
+                </div>
+            </div>
+
+            <!-- 时间线面板 -->
+            <div class="panel" id="panel-timeline">
+                <div class="timeline-horizontal-wrapper" id="timeline-horizontal-wrapper"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 完成弹窗 -->
+    <div class="completion-overlay" id="completion-overlay"></div>
+    <div class="completion-banner" id="completion-banner">
+        <div class="banner-icon">🎉</div>
+        <h2>太棒了！</h2>
+        <p>你已完成全部9个理论的学习！</p>
+        <div class="completion-stats">
+            <div><span class="c-value" id="final-learned">9</span><br><span style="font-size:.65rem;color:var(--text-muted);">理论</span></div>
+            <div><span class="c-value" id="final-total-time">0s</span><br><span style="font-size:.65rem;color:var(--text-muted);">时长</span></div>
+            <div><span class="c-value" id="final-notes">0</span><br><span style="font-size:.65rem;color:var(--text-muted);">笔记</span></div>
+        </div>
+        <button class="btn-close-banner" id="btn-close-banner">继续探索</button>
+    </div>
+
+    <!-- 查看完整知识模态框 -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content" id="modal-content"></div>
+    </div>
+
+    <script>
+        // ============ 数据上报函数（全局） ============
+        async function sendDataToServer(data) {
+            try {
+                const response = await fetch('https://quickform.cn/api/mg34uj0pnq', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    console.warn('数据发送失败，状态码：', response.status);
+                } else {
+                    console.log('数据发送成功');
+                }
+            } catch (error) {
+                console.error('网络错误，无法发送数据：', error);
+            }
+        }
+
+        // ============ 理论数据（每理论10题） ============
+        const theoriesData = [
+            {id:1,title:'交互影响距离理论',author:'迈克尔·穆尔',category:'distance',icon:'🌉',tagline:'对话、结构与学习者自主性的动态平衡',description:'远程教育中的"距离"不仅是地理的，更是教育学和心理学的。交互距离由对话、结构和学习者自主性三个变量决定。',concepts:['对话','结构','自主性','心理距离'],application:'设计在线课程时，增加师生互动渠道来缩短交互距离。',searchText:'交互影响距离 穆尔 对话 结构 自主性',coreView:'交互距离由对话、结构和学习者自主性三个变量决定。',proposer:'迈克尔·穆尔 (Michael Moore)，远程教育领域先驱。',scenarios:'远程课程设计、在线师生互动策略、学习者支持服务。',quiz:[{type:'single',question:'交互影响距离理论的三个核心变量是？',options:['对话、结构、自主性','互动、内容、评价','时间、地点、技术','动机、策略、反馈'],answer:0,hint:'关注师生互动质量和课程设计灵活性。'},{type:'multiple',question:'哪些属于交互影响距离理论的变量？',options:['对话','结构','自主性','学习动机'],answer:[0,1,2],hint:'考虑课程设计的灵活性和学习者独立性。'},{type:'judge',question:'交互距离仅仅指地理上的距离。',answer:false,hint:'距离还包括心理和传播层面。'},{type:'single',question:'增加对话互动会怎样影响交互距离？',options:['增加距离','减少距离','没有影响','不确定'],answer:1,hint:'对话可以拉近师生心理距离。'},{type:'judge',question:'课程结构越固定，交互距离越小。',answer:false,hint:'结构固定可能减少学习者自主性。'},{type:'single',question:'交互影响距离理论主要应用于？',options:['远程教育','课堂教学','实验室','体育训练'],answer:0,hint:'该理论针对远程教育场景。'},{type:'judge',question:'学习者自主性越高，交互距离越小。',answer:true,hint:'自主性高的学习者能更好应对距离。'},{type:'single',question:'穆尔提出交互距离理论的时间是？',options:['1972','1986','2000','2005'],answer:0,hint:'这是较早的远程教育理论之一。'},{type:'multiple',question:'交互距离理论中对话包括哪些形式？',options:['师生对话','生生对话','学生与内容对话','以上都是'],answer:[0,1,2],hint:'对话不仅是师生之间。'},{type:'judge',question:'交互距离与结构成反比关系。',answer:true,hint:'结构越灵活，距离越近。'}],videoUrl:'https://www.bilibili.com/video/BV1xx411c7xx',docUrl:'https://www.icde.org/'},
+            {id:2,title:'联通主义学习理论',author:'乔治·西蒙斯',category:'learning',icon:'🕸️',tagline:'学习发生在网络连接之中',description:'数字时代的学习发生在网络中。知识存在于连接之中，学习者通过建立和维护连接来持续学习。',concepts:['网络学习','节点连接','分布式认知','持续学习'],application:'鼓励学习者使用社交媒体建立个人学习网络。',searchText:'联通主义 西蒙斯 网络学习 连接',coreView:'学习是连接专门节点或信息源的过程，知识驻留在网络中。',proposer:'乔治·西蒙斯 (George Siemens)，加拿大教育理论家。',scenarios:'MOOC学习、个人学习环境、社交媒体学习、企业知识管理。',quiz:[{type:'single',question:'联通主义认为知识存在于哪里？',options:['个体头脑中','网络连接中','教科书中','教师的经验中'],answer:1,hint:'知识不在固定位置。'},{type:'multiple',question:'联通主义强调哪些概念？',options:['节点','连接','网络','记忆'],answer:[0,1,2],hint:'关注信息源之间的关联。'},{type:'judge',question:'知道在哪里找知识比知道知识本身更重要。',answer:true,hint:'数字时代信息爆炸。'},{type:'single',question:'联通主义学习理论的核心观点是？',options:['学习发生在网络连接中','学习是刺激反应','学习是知识建构','学习是行为改变'],answer:0,hint:'知识与连接有关。'},{type:'judge',question:'联通主义强调知识的静态存储。',answer:false,hint:'知识是动态、分散的。'},{type:'single',question:'联通主义的提出者是？',options:['乔治·西蒙斯','迈克尔·穆尔','陈丽','兰迪·加里森'],answer:0,hint:'加拿大教育理论家。'},{type:'judge',question:'联通主义适用于传统课堂教学。',answer:false,hint:'更适合数字网络环境。'},{type:'multiple',question:'联通主义中学习者需要建立哪些连接？',options:['与信息源','与专家','与同伴','与自己'],answer:[0,1,2],hint:'建立与他人的网络连接。'},{type:'single',question:'个人学习环境(PLE)基于什么理论？',options:['联通主义','行为主义','认知主义','建构主义'],answer:0,hint:'PLE强调网络连接。'},{type:'judge',question:'联通主义认为学习是终身的过程。',answer:true,hint:'知识不断更新，学习持续进行。'}],videoUrl:'https://www.youtube.com/watch?v=YMcTHndpzYg',docUrl:'https://www.elearnspace.org/'},
+            {id:3,title:'首要教学原理',author:'戴维·梅里尔',category:'instructional',icon:'🎯',tagline:'以问题为中心的五阶段有效教学',description:'有效教学应围绕真实问题展开，包含聚焦问题、激活旧知、示证新知、应用新知、融会贯通五个阶段。',concepts:['问题中心','激活旧知','示证新知','应用练习','融会贯通'],application:'在线教学设计以真实任务为起点。',searchText:'首要教学原理 梅里尔 问题中心',coreView:'有效教学以问题为中心，通过五个阶段促进学习。',proposer:'戴维·梅里尔 (David Merrill)，美国教学设计专家。',scenarios:'e-learning课程设计、企业培训、课堂教学改革。',quiz:[{type:'single',question:'首要教学原理的中心是？',options:['真实问题','技术工具','教师讲授','学习目标'],answer:0,hint:'围绕什么展开教学设计？'},{type:'multiple',question:'哪些属于首要教学原理的阶段？',options:['激活旧知','示证新知','应用新知','课后辅导'],answer:[0,1,2],hint:'学习新知识的环节。'},{type:'judge',question:'首要教学原理认为教师讲授最有效。',answer:false,hint:'以问题为中心而非教师。'},{type:'single',question:'首要教学原理的第一步是？',options:['激活旧知','示证新知','聚焦问题','应用新知'],answer:2,hint:'首先让学习者面对真实问题。'},{type:'judge',question:'首要教学原理强调以学生为中心。',answer:true,hint:'关注学习者主动参与。'},{type:'single',question:'激活旧知的目的是？',options:['唤起已有经验','引入新知识','评估学习','管理课堂'],answer:0,hint:'帮助学习者连接新旧知识。'},{type:'judge',question:'应用新知阶段应该让学习者做大量练习。',answer:true,hint:'通过实践巩固知识。'},{type:'multiple',question:'首要教学原理适用于哪些场景？',options:['e-learning','企业培训','课堂教学','体育训练'],answer:[0,1,2],hint:'教学设计领域的通用原理。'},{type:'single',question:'融会贯通阶段强调？',options:['将知识整合到生活中','记忆知识点','完成考试','遵守规则'],answer:0,hint:'知识内化为能力。'},{type:'judge',question:'首要教学原理与建构主义有相似之处。',answer:true,hint:'都强调学习者主动建构。'}],videoUrl:'https://www.youtube.com/watch?v=WjF7BLlGqso',docUrl:'https://mdavidmerrill.com/'},
+            {id:4,title:'教与学再度整合',author:'德斯蒙德·基更',category:'distance',icon:'🔄',tagline:'重新连接分离的教与学',description:'远程教育的核心挑战是教与学的时空分离，需要重建师生之间的教学交互。',concepts:['时空分离','技术中介','教学交互','重新整合'],application:'在异步学习中加入同步互动环节。',searchText:'教与学再度整合 基更 时空分离',coreView:'远程教育必须通过教学设计和技术手段将分离的教与学重新整合。',proposer:'德斯蒙德·基更 (Desmond Keegan)，爱尔兰远程教育学者。',scenarios:'远程教育机构质量管理、在线课程设计、教师培训。',quiz:[{type:'single',question:'教与学再度整合主要解决什么问题？',options:['教与学的时空分离','课程内容过多','学习动机不足','技术设备落后'],answer:0,hint:'远程教育最大的挑战。'},{type:'multiple',question:'需要重建哪些交互？',options:['师生交互','生生交互','学生与内容交互','学生与家长交互'],answer:[0,1,2],hint:'教学过程中所有互动类型。'},{type:'judge',question:'教与学的分离不可避免。',answer:false,hint:'远程教育目标是解决分离。'},{type:'single',question:'教与学再度整合的关键是？',options:['技术手段','重建教学交互','增加课程内容','减少互动'],answer:1,hint:'核心是重建教学交互。'},{type:'judge',question:'技术可以完全替代师生交互。',answer:false,hint:'技术只是支持工具。'},{type:'single',question:'教与学再度整合理论提出时间是？',options:['1986','1972','2000','2010'],answer:0,hint:'20世纪80年代。'},{type:'judge',question:'同步互动可以弥补教与学分离。',answer:true,hint:'同步互动增强实时交流。'},{type:'multiple',question:'教与学再度整合可以通过哪些方式实现？',options:['视频会议','在线讨论','即时反馈','课后练习'],answer:[0,1,2],hint:'各种技术支持的交互方式。'},{type:'single',question:'教与学再度整合属于哪个领域？',options:['远程教育','认知心理学','教学设计','学习科学'],answer:0,hint:'远程教育理论范畴。'},{type:'judge',question:'教与学再度整合关注学习者的情感需求。',answer:false,hint:'主要关注教学交互的重建。'}],videoUrl:'https://www.youtube.com/watch?v=KeeganDistanceEd',docUrl:'https://www.ou.nl/'},
+            {id:5,title:'认知负荷理论',author:'约翰·斯威勒',category:'learning',icon:'🧠',tagline:'管理工作记忆的有限容量',description:'认知负荷分为内在负荷、外在负荷、相关负荷。教学设计应减少外在负荷、管理内在负荷。',concepts:['工作记忆','内在负荷','外在负荷','相关负荷'],application:'使用多媒体学习原则，减少无关信息。',searchText:'认知负荷 斯威勒 工作记忆',coreView:'工作记忆容量有限，教学应优化认知资源分配。',proposer:'约翰·斯威勒 (John Sweller)，澳大利亚认知心理学家。',scenarios:'多媒体教学设计、课程内容呈现、教材编写。',quiz:[{type:'single',question:'认知负荷理论关注哪种记忆的容量？',options:['长期记忆','工作记忆','感觉记忆','语义记忆'],answer:1,hint:'一次能处理的信息量有限。'},{type:'multiple',question:'认知负荷分为哪些类型？',options:['内在负荷','外在负荷','相关负荷','情感负荷'],answer:[0,1,2],hint:'与内容、设计和建构相关。'},{type:'judge',question:'减少外在负荷对学习总是有益的。',answer:true,hint:'外在负荷由设计不当造成。'},{type:'single',question:'哪种策略可减少外在负荷？',options:['增加无关图片','使用清晰布局','提供复杂导航','同时呈现多种媒体'],answer:1,hint:'清晰设计减少认知负担。'},{type:'judge',question:'内在负荷由教学设计不当造成。',answer:false,hint:'内在负荷取决于内容复杂度。'},{type:'single',question:'认知负荷理论提出时间是？',options:['1988','1972','2000','2005'],answer:0,hint:'20世纪80年代末。'},{type:'judge',question:'分块呈现内容可以减少认知负荷。',answer:true,hint:'分块有助于管理工作记忆。'},{type:'multiple',question:'多媒体学习原则包括？',options:['减少无关信息','图文结合','分块呈现','增加动画效果'],answer:[0,1,2],hint:'避免增加不必要的认知负担。'},{type:'single',question:'相关负荷与什么有关？',options:['图式构建','外部干扰','学习材料','教师讲解'],answer:0,hint:'相关负荷促进知识建构。'},{type:'judge',question:'认知负荷理论可应用于教学设计。',answer:true,hint:'该理论对教学设计有重要指导意义。'}],videoUrl:'https://www.youtube.com/watch?v=HAe9zndGjGQ',docUrl:'https://www.cognitiveloadtheory.com/'},
+            {id:6,title:'ADDIE模型',author:'佛罗里达州立大学',category:'instructional',icon:'📋',tagline:'系统化教学设计的五阶段框架',description:'ADDIE包含分析、设计、开发、实施、评估五个阶段，各阶段循环迭代。',concepts:['分析','设计','开发','实施','评估'],application:'按照ADDIE流程系统推进，评估贯穿始终。',searchText:'ADDIE 佛罗里达州立大学 教学设计',coreView:'ADDIE是系统化教学设计模型，提供五阶段循环框架。',proposer:'美国佛罗里达州立大学教育研究中心。',scenarios:'课程开发、企业培训项目、教学系统设计。',quiz:[{type:'single',question:'ADDIE模型包含几个阶段？',options:['3个','4个','5个','6个'],answer:2,hint:'每个字母代表一个阶段。'},{type:'multiple',question:'ADDIE模型包含哪些阶段？',options:['分析','设计','开发','评估'],answer:[0,1,2,3],hint:'还缺少实施阶段。'},{type:'judge',question:'ADDIE阶段是严格线性不可回退的。',answer:false,hint:'ADDIE是循环迭代的。'},{type:'single',question:'评估阶段发生在？',options:['只在最后','贯穿始终','只在开始','不需要评估'],answer:1,hint:'评估应持续进行。'},{type:'judge',question:'ADDIE核心是五阶段循环。',answer:true,hint:'强调迭代改进。'},{type:'single',question:'ADDIE中A代表？',options:['分析','应用','评估','行动'],answer:0,hint:'第一个字母代表分析。'},{type:'judge',question:'ADDIE模型可应用于企业培训。',answer:true,hint:'ADDIE适用于多种培训场景。'},{type:'multiple',question:'ADDIE模型中设计阶段包括？',options:['确定教学目标','选择教学策略','开发教学材料','进行需求分析'],answer:[0,1],hint:'设计阶段关注目标与策略。'},{type:'single',question:'ADDIE模型的提出机构是？',options:['佛罗里达州立大学','哈佛大学','斯坦福大学','麻省理工'],answer:0,hint:'美国佛罗里达州立大学。'},{type:'judge',question:'ADDIE模型可与其他设计框架结合使用。',answer:true,hint:'与其他框架可以互相补充。'}],videoUrl:'https://www.youtube.com/watch?v=JZdv5lrJs4U',docUrl:'https://www.instructionaldesign.org/models/addie/'},
+            {id:7,title:'远程交互模型',author:'陈丽',category:'distance',icon:'💻',tagline:'教学交互的三层次递进',description:'远程学习中的教学交互分为操作交互、信息交互、概念交互三个层次。',concepts:['操作交互','信息交互','概念交互','层次递进'],application:'确保平台界面易用，设计丰富的讨论与协作活动。',searchText:'远程交互 陈丽 操作交互 信息交互',coreView:'远程学习交互包括操作交互、信息交互、概念交互三个层次。',proposer:'陈丽，北京师范大学教授。',scenarios:'远程学习平台设计、在线教学活动组织、学习分析。',quiz:[{type:'single',question:'远程交互模型是谁提出的？',options:['陈丽','穆尔','基更','加里森'],answer:0,hint:'一位中国远程教育学者。'},{type:'multiple',question:'远程交互模型的三个层次包括？',options:['操作交互','信息交互','概念交互','社会交互'],answer:[0,1,2],hint:'从低到高递进。'},{type:'judge',question:'概念交互是远程交互的最高层次。',answer:true,hint:'概念交互涉及新旧知识碰撞。'},{type:'single',question:'操作交互发生在？',options:['学习者与媒体界面之间','学习者与教师之间','学习者与内容之间','学习者之间'],answer:0,hint:'操作交互是人与媒体的交互。'},{type:'judge',question:'信息交互是远程交互的最低层次。',answer:false,hint:'操作交互是最基础层次。'},{type:'single',question:'概念交互的主要特点是？',options:['新旧知识碰撞','信息传递','操作练习','社会互动'],answer:0,hint:'概念交互涉及深度认知加工。'},{type:'judge',question:'信息交互包括师生交互和生生交互。',answer:true,hint:'信息交互涵盖多种形式。'},{type:'multiple',question:'远程交互模型可应用于？',options:['平台设计','教学活动组织','学习分析','课程内容开发'],answer:[0,1,2],hint:'远程学习的关键环节。'},{type:'single',question:'陈丽是哪所大学的教授？',options:['北京师范大学','清华大学','北京大学','华东师范大学'],answer:0,hint:'中国远程教育领域的重要学者。'},{type:'judge',question:'远程交互模型只适用于远程教育。',answer:false,hint:'也可应用于混合式学习。'}],videoUrl:'https://www.bilibili.com/video/BV1s4411m7YQ',docUrl:'https://www.bnu.edu.cn/'},
+            {id:8,title:'探究社区理论模型',author:'兰迪·加里森',category:'community',icon:'🏛️',tagline:'三种存在支撑有意义的学习',description:'有意义的在线学习体验由认知存在、社会存在、教学存在共同支撑。',concepts:['认知存在','社会存在','教学存在','探究社区'],application:'教师应同时关注知识引导、营造安全讨论氛围。',searchText:'探究社区 加里森 认知存在 社会存在',coreView:'认知存在、社会存在和教学存在是有效在线学习的关键。',proposer:'兰迪·加里森 (Randy Garrison)，加拿大远程教育研究者。',scenarios:'在线讨论区设计、混合式教学、教师引导策略。',quiz:[{type:'single',question:'探究社区理论包含哪三种存在？',options:['认知、社会、教学','认知、情感、行为','教师、学生、内容','同步、异步、混合'],answer:0,hint:'与知识建构、人际互动和教师引导相关。'},{type:'multiple',question:'哪些属于探究社区模型要素？',options:['认知存在','社会存在','教学存在','情感存在'],answer:[0,1,2],hint:'不包括情感层面。'},{type:'judge',question:'教学存在在探究社区中不重要。',answer:false,hint:'教学存在负责设计和引导。'},{type:'single',question:'教学存在的主要作用是？',options:['提供社交空间','设计和引导学习','营造情感氛围','提供技术平台'],answer:1,hint:'教学存在关注学习设计和指导。'},{type:'judge',question:'社会存在对认知存在没有影响。',answer:false,hint:'社会存在促进认知建构。'},{type:'single',question:'探究社区模型的提出者是？',options:['兰迪·加里森','迈克尔·穆尔','陈丽','乔治·西蒙斯'],answer:0,hint:'加拿大远程教育研究者。'},{type:'judge',question:'认知存在是指学习者建构知识的能力。',answer:true,hint:'认知存在与知识建构相关。'},{type:'multiple',question:'探究社区理论适用于哪些场景？',options:['在线讨论区','混合式教学','教师引导','传统课堂'],answer:[0,1,2],hint:'主要针对在线学习环境。'},{type:'single',question:'社会存在关注什么？',options:['学习者在社区中真实表达自我','知识建构','教师指导','技术应用'],answer:0,hint:'社会存在关乎人际互动。'},{type:'judge',question:'探究社区理论强调三种存在的平衡。',answer:true,hint:'三种存在需要协同作用。'}],videoUrl:'https://www.youtube.com/watch?v=7YJ7x5F0kZk',docUrl:'https://coi.athabascau.ca/'},
+            {id:9,title:'学习对话框架',author:'戴安娜·罗瑞兰德',category:'community',icon:'💬',tagline:'学习是一种对话过程',description:'学习是一种对话过程，涉及教师与学习者、学习者与学习者、学习者与内容之间的持续交流。',concepts:['对话性学习','师生对话','生生对话','反思性对话'],application:'设计在线讨论时创造生生对话机会。',searchText:'学习对话 罗瑞兰德 对话性学习',coreView:'学习是一种对话过程，教师应设计支持多种对话形式的学习活动。',proposer:'戴安娜·罗瑞兰德 (Diana Laurillard)，英国教育技术专家。',scenarios:'在线讨论活动设计、协作学习、同伴互评。',quiz:[{type:'single',question:'学习对话框架强调学习是什么过程？',options:['对话','记忆','模仿','训练'],answer:0,hint:'学习涉及多种交流互动。'},{type:'multiple',question:'学习对话框架包括哪些对话类型？',options:['师生对话','生生对话','学生与内容对话','学生与家长对话'],answer:[0,1,2],hint:'关注核心交互类型。'},{type:'judge',question:'技术只是传递内容的工具。',answer:false,hint:'技术应支持多种对话形式。'},{type:'single',question:'学习对话框架强调哪种对话？',options:['师生对话','生生对话','学生与内容对话','以上都是'],answer:3,hint:'多种对话形式的整合。'},{type:'judge',question:'教师应设计多种对话活动。',answer:true,hint:'创造丰富的对话环境。'},{type:'single',question:'学习对话框架的提出者是？',options:['戴安娜·罗瑞兰德','兰迪·加里森','陈丽','乔治·西蒙斯'],answer:0,hint:'英国教育技术专家。'},{type:'judge',question:'学习对话框架只适用于在线学习。',answer:false,hint:'也可应用于混合式学习。'},{type:'multiple',question:'学习对话框架中技术的作用包括？',options:['支持师生对话','支持生生对话','支持学生与内容对话','替代教师'],answer:[0,1,2],hint:'技术是支持工具而非替代品。'},{type:'single',question:'同伴互评属于哪种对话？',options:['生生对话','师生对话','学生与内容对话','学生与家长对话'],answer:0,hint:'学习者之间的交流。'},{type:'judge',question:'学习对话框架认为反思性对话很重要。',answer:true,hint:'反思促进深度理解。'}],videoUrl:'https://www.youtube.com/watch?v=LaurillardDialogue',docUrl:'https://www.laurillard.com/'}
+        ];
+
+        // ============ 状态 ============
+        let learnedTheories = new Set();
+        let studyTimes = {};
+        let notes = {};
+        let particlesEnabled = true;
+        let searchQuery = '';
+        let hasShownCompletion = false;
+        let lastFlipTimestamps = {};
+        let currentPanel = 'cards';
+        let matchSelected = null;
+        let matchScore = 0;
+        let quizAttempts = {};
+        let quizScore = 0;
+        let quizTotal = 0;
+        let currentQuizBank = [];
+        let leaderboardScores = [];
+
+        const STORAGE_KEY_PROGRESS = 'learning-theories-progress';
+        const STORAGE_KEY_NOTES = 'learning-theories-notes';
+        const STORAGE_KEY_STUDY_TIME = 'learning-theories-study-times';
+        const STORAGE_KEY_PARTICLES = 'particles-enabled';
+        const STORAGE_KEY_LEADERBOARD = 'quiz-leaderboard';
+
+        // ============ 音效 ============
+        function playSuccessSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 880;
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.4);
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.type = 'sine';
+                    osc2.frequency.value = 1175;
+                    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    osc2.start(audioCtx.currentTime);
+                    osc2.stop(audioCtx.currentTime + 0.5);
+                }, 120);
+            } catch (e) { console.log('音效不可用'); }
+        }
+
+        // ============ 登录 ============
+        const loginSection = document.getElementById('login-section');
+        const appLayout = document.getElementById('app-layout');
+        const studentIdInput = document.getElementById('student-id');
+        const studentNameInput = document.getElementById('student-name');
+        const studentGroupInput = document.getElementById('student-group');
+        const loginError = document.getElementById('login-error');
+        const btnLogin = document.getElementById('btn-login');
+        const sidebarUserName = document.getElementById('sidebar-user-name');
+        const sidebarUserId = document.getElementById('sidebar-user-id');
+        const sidebarUserGroup = document.getElementById('sidebar-user-group');
+
+        btnLogin.addEventListener('click', function() {
+            const id = studentIdInput.value.trim();
+            const name = studentNameInput.value.trim();
+            const group = studentGroupInput.value.trim();
+            if (!id || !name || !group) { loginError.textContent = '请输入学号、姓名和小组'; return; }
+            localStorage.setItem('studentId', id);
+            localStorage.setItem('studentName', name);
+            localStorage.setItem('studentGroup', group);
+            loginSection.classList.add('hidden');
+            appLayout.style.display = 'flex';
+            sidebarUserName.textContent = name;
+            sidebarUserId.textContent = '学号：' + id;
+            sidebarUserGroup.textContent = '小组：' + group;
+            // 登录成功发送学生基本信息
+            sendDataToServer({
+                type: 'login',
+                studentId: id,
+                studentName: name,
+                studentGroup: group,
+                timestamp: new Date().toISOString()
+            });
+            initMainApp();
+        });
+
+        const savedId = localStorage.getItem('studentId');
+        const savedName = localStorage.getItem('studentName');
+        const savedGroup = localStorage.getItem('studentGroup');
+        if (savedId && savedName && savedGroup) {
+            loginSection.classList.add('hidden');
+            appLayout.style.display = 'flex';
+            sidebarUserName.textContent = savedName;
+            sidebarUserId.textContent = '学号：' + savedId;
+            sidebarUserGroup.textContent = '小组：' + savedGroup;
+            // 自动登录也发送学生基本信息
+            sendDataToServer({
+                type: 'login',
+                studentId: savedId,
+                studentName: savedName,
+                studentGroup: savedGroup,
+                timestamp: new Date().toISOString()
+            });
+            initMainApp();
+        }
+
+        function initMainApp() {
+            function formatTime(seconds) {
+                seconds = Math.floor(seconds);
+                if (seconds < 60) return seconds + ' 秒';
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                if (mins < 60) return mins + ' 分 ' + secs + ' 秒';
+                return Math.floor(mins / 60) + ' 小时 ' + (mins % 60) + ' 分';
+            }
+
+            function loadData() {
+                try { const s = localStorage.getItem(STORAGE_KEY_PROGRESS); if (s) learnedTheories = new Set(JSON.parse(s).map(Number)); } catch (e) {}
+                try { const s = localStorage.getItem(STORAGE_KEY_NOTES); if (s) notes = JSON.parse(s); } catch (e) { notes = {}; }
+                try { const s = localStorage.getItem(STORAGE_KEY_STUDY_TIME); if (s) studyTimes = JSON.parse(s); } catch (e) { studyTimes = {}; }
+                theoriesData.forEach(t => { if (!studyTimes[t.id]) studyTimes[t.id] = 0; });
+                try { const s = localStorage.getItem(STORAGE_KEY_PARTICLES); if (s !== null) particlesEnabled = s === 'true'; } catch (e) {}
+                if (!particlesEnabled) document.getElementById('particles-container').classList.add('hidden');
+                try { const s = localStorage.getItem(STORAGE_KEY_LEADERBOARD); if (s) leaderboardScores = JSON.parse(s); } catch (e) { leaderboardScores = []; }
+            }
+
+            function saveProgress() { localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify([...learnedTheories])); }
+            function saveNotes() { localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(notes)); }
+            function saveStudyTimes() { localStorage.setItem(STORAGE_KEY_STUDY_TIME, JSON.stringify(studyTimes)); }
+            function saveLeaderboard() { localStorage.setItem(STORAGE_KEY_LEADERBOARD, JSON.stringify(leaderboardScores)); }
+
+            function updateProgressUI() {
+                const total = theoriesData.length;
+                const learnedCount = learnedTheories.size;
+                const percent = total > 0 ? Math.round((learnedCount / total) * 100) : 0;
+                document.getElementById('navbar-learned-count').textContent = learnedCount;
+                document.getElementById('navbar-progress-fill').style.width = percent + '%';
+                document.getElementById('stat-learned').textContent = learnedCount;
+                document.getElementById('stat-percent').textContent = percent + '%';
+                const totalSeconds = Object.values(studyTimes).reduce((a, b) => a + (b || 0), 0);
+                document.getElementById('stat-total-time').textContent = formatTime(totalSeconds);
+                document.getElementById('final-learned').textContent = learnedCount;
+                document.getElementById('final-total-time').textContent = formatTime(totalSeconds);
+                document.getElementById('final-notes').textContent = Object.values(notes).filter(n => n && n.trim()).length;
+                if (learnedCount === total && !hasShownCompletion) {
+                    hasShownCompletion = true;
+                    setTimeout(() => { document.getElementById('completion-overlay').classList.add('show'); document.getElementById('completion-banner').classList.add('show'); }, 500);
+                }
+            }
+
+            function renderCards() {
+                const cardsGrid = document.getElementById('cards-grid');
+                cardsGrid.innerHTML = '';
+                theoriesData.forEach((t, idx) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'card-wrapper';
+                    wrapper.setAttribute('data-category', t.category);
+                    wrapper.setAttribute('data-theory-id', t.id);
+                    wrapper.setAttribute('data-search-text', t.searchText);
+                    if (learnedTheories.has(t.id)) wrapper.classList.add('learned');
+                    wrapper.innerHTML = `
+                        <div class="card" role="button" tabindex="0">
+                            <div class="card-front">
+                                <div class="category-stripe"></div>
+                                <span class="card-number">${String(idx + 1).padStart(2, '0')}</span>
+                                <span class="card-category-badge">${t.category === 'distance' ? '远程教育' : t.category === 'learning' ? '学习理论' : t.category === 'instructional' ? '教学设计' : '社区对话'}</span>
+                                <div class="card-icon">${t.icon}</div>
+                                <h3 class="card-title">${t.title}</h3>
+                                <p class="card-author">${t.author}</p>
+                                <p class="card-tagline">${t.tagline}</p>
+                                <div class="learned-badge">✓ 已学习</div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-back-header"><span class="back-icon">${t.icon}</span><div><div class="back-title">${t.title}</div><div class="back-author">${t.author}</div></div></div>
+                                <p class="card-back-description">${t.description}</p>
+                                <div class="card-back-concepts">${t.concepts.map(c => `<span class="concept-tag">${c}</span>`).join('')}</div>
+                                <p class="card-back-application">💡 <strong>应用：</strong>${t.application}</p>
+                                <div class="card-back-study-time">⏱ 学习时长：<span class="study-time-display">${formatTime(studyTimes[t.id] || 0)}</span></div>
+                                <button class="btn-view-detail" data-theory-id="${t.id}">📖 查看完整知识</button>
+                                <button class="btn-mark-learned" data-theory-id="${t.id}" ${learnedTheories.has(t.id) ? 'disabled' : ''}>✓ 标记为已学习</button>
+                                <div class="card-back-note"><textarea placeholder="写下你的学习笔记...">${notes[t.id] || ''}</textarea><button class="btn-save-note">保存笔记</button><span class="note-saved-indicator">已提交</span></div>
+                            </div>
+                        </div>
+                    `;
+                    cardsGrid.appendChild(wrapper);
+                });
+                bindCardEvents();
+                applyFilterAndSearch();
+            }
+
+            function bindCardEvents() {
+                document.querySelectorAll('.card-wrapper').forEach(wrapper => {
+                    const card = wrapper.querySelector('.card');
+                    const id = parseInt(wrapper.getAttribute('data-theory-id'));
+                    card.addEventListener('click', function(e) {
+                        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+                        flipCard(card, id);
+                    });
+                    card.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return; flipCard(card, id); }
+                    });
+                    const textarea = wrapper.querySelector('textarea');
+                    const saveBtn = wrapper.querySelector('.btn-save-note');
+                    const indicator = wrapper.querySelector('.note-saved-indicator');
+                    textarea.addEventListener('input', function() { notes[id] = textarea.value; saveNotes(); updateProgressUI(); });
+                    saveBtn.addEventListener('click', function(e) { e.stopPropagation(); notes[id] = textarea.value; saveNotes(); indicator.classList.add('show'); setTimeout(() => indicator.classList.remove('show'), 1500); updateProgressUI(); });
+                    const markBtn = wrapper.querySelector('.btn-mark-learned');
+                    markBtn.addEventListener('click', function(e) { e.stopPropagation(); markAsLearned(id, wrapper, markBtn); });
+                    const viewBtn = wrapper.querySelector('.btn-view-detail');
+                    viewBtn.addEventListener('click', function(e) { e.stopPropagation(); openModal(id); });
+                });
+            }
+
+            function flipCard(card, id) {
+                const isFlipped = card.classList.contains('flipped');
+                if (!isFlipped) {
+                    lastFlipTimestamps[id] = Date.now();
+                    const wrapper = card.closest('.card-wrapper');
+                    if (wrapper) { const timeDisplay = wrapper.querySelector('.study-time-display'); if (timeDisplay) timeDisplay.textContent = '0 秒'; }
+                } else {
+                    if (lastFlipTimestamps[id]) { studyTimes[id] = (studyTimes[id] || 0) + (Date.now() - lastFlipTimestamps[id]) / 1000; lastFlipTimestamps[id] = null; saveStudyTimes(); const wrapper = card.closest('.card-wrapper'); if (wrapper) { const timeDisplay = wrapper.querySelector('.study-time-display'); if (timeDisplay) timeDisplay.textContent = formatTime(studyTimes[id] || 0); } }
+                }
+                card.classList.toggle('flipped');
+                updateProgressUI();
+            }
+
+            function markAsLearned(id, wrapper, button) {
+                if (learnedTheories.has(id)) return;
+                if (lastFlipTimestamps[id]) { 
+                    studyTimes[id] = (studyTimes[id] || 0) + (Date.now() - lastFlipTimestamps[id]) / 1000; 
+                    lastFlipTimestamps[id] = null; 
+                    saveStudyTimes(); 
+                }
+                learnedTheories.add(id); 
+                saveProgress();
+                wrapper.classList.add('learned'); 
+                button.disabled = true; 
+                button.textContent = '✓ 已学习';
+                updateProgressUI();
+                const timeDisplay = wrapper.querySelector('.study-time-display');
+                if (timeDisplay) timeDisplay.textContent = formatTime(studyTimes[id] || 0);
+                // 标记已学习时发送学习记录
+                sendDataToServer({
+                    type: 'study',
+                    studentId: localStorage.getItem('studentId'),
+                    theoryId: id,
+                    studyTimeSeconds: Math.round(studyTimes[id] || 0),
+                    timestamp: new Date().toISOString()
+                });
+            }
+
+            window.addEventListener('beforeunload', function() {
+                theoriesData.forEach(t => { 
+                    if (lastFlipTimestamps[t.id]) { 
+                        studyTimes[t.id] = (studyTimes[t.id] || 0) + (Date.now() - lastFlipTimestamps[t.id]) / 1000; 
+                        lastFlipTimestamps[t.id] = null; 
+                    } 
+                });
+                saveStudyTimes();
+            });
+
+            function applyFilterAndSearch() {
+                document.querySelectorAll('.card-wrapper').forEach(w => {
+                    const st = w.getAttribute('data-search-text') || '';
+                    const ok = searchQuery === '' || st.toLowerCase().includes(searchQuery.toLowerCase());
+                    w.classList.toggle('hidden-card', !ok);
+                });
+            }
+            document.getElementById('search-input').addEventListener('input', function() { searchQuery = this.value.trim(); document.getElementById('search-clear').classList.toggle('visible', searchQuery !== ''); applyFilterAndSearch(); });
+            document.getElementById('search-clear').addEventListener('click', function() { document.getElementById('search-input').value = ''; searchQuery = ''; this.classList.remove('visible'); applyFilterAndSearch(); });
+
+            // ============ 模态框 ============
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalContent = document.getElementById('modal-content');
+            function openModal(id) {
+                const t = theoriesData.find(th => th.id === id);
+                if (!t) return;
+                modalContent.innerHTML = `
+                    <button class="modal-close" id="modal-close">×</button>
+                    <div class="modal-title">${t.icon} ${t.title}</div>
+                    <div class="modal-author">${t.author}</div>
+                    <div class="modal-section"><h3>理论核心观点</h3><p>${t.coreView}</p></div>
+                    <div class="modal-section"><h3>提出者</h3><p>${t.proposer}</p></div>
+                    <div class="modal-section"><h3>适用场景</h3><p>${t.scenarios}</p></div>
+                    <div class="modal-section"><h3>学习测验</h3><div id="modal-quiz-container"></div></div>
+                    <div class="modal-section"><h3>学习资源</h3>
+                        <a class="modal-video-link" href="${t.videoUrl}" target="_blank">▶ 观看学习视频</a><br>
+                        <a class="modal-video-link" href="${t.docUrl}" target="_blank">📄 查看学习文档</a>
+                    </div>
+                `;
+                modalOverlay.classList.add('show');
+                document.getElementById('modal-close').addEventListener('click', () => modalOverlay.classList.remove('show'));
+                renderModalQuiz(t);
+            }
+            modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) modalOverlay.classList.remove('show'); });
+
+            function renderModalQuiz(t) {
+                const container = document.getElementById('modal-quiz-container');
+                container.innerHTML = '';
+                t.quiz.forEach((q, qi) => {
+                    const qDiv = document.createElement('div');
+                    qDiv.className = 'modal-quiz-question';
+                    qDiv.innerHTML = `<div class="q-text">${qi + 1}. ${q.type === 'single' ? '[单选]' : q.type === 'multiple' ? '[多选]' : '[判断]'} ${q.question}</div>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'modal-quiz-options';
+                    if (q.type === 'single' || q.type === 'judge') {
+                        q.options.forEach((opt, oi) => {
+                            const optDiv = document.createElement('div');
+                            optDiv.className = 'modal-quiz-option';
+                            optDiv.textContent = opt;
+                            optDiv.addEventListener('click', function() {
+                                if (qDiv.dataset.answered === 'true') return;
+                                qDiv.dataset.answered = 'true';
+                                const isCorrect = (oi === q.answer);
+                                if (isCorrect) {
+                                    optDiv.classList.add('correct');
+                                    playSuccessSound();
+                                } else {
+                                    optDiv.classList.add('wrong');
+                                    const hint = document.createElement('div');
+                                    hint.className = 'modal-quiz-feedback wrong';
+                                    hint.textContent = q.hint || '回答错误';
+                                    qDiv.appendChild(hint);
+                                }
+                            });
+                            optionsDiv.appendChild(optDiv);
+                        });
+                    } else if (q.type === 'multiple') {
+                        const selected = new Set();
+                        q.options.forEach((opt, oi) => {
+                            const optDiv = document.createElement('div');
+                            optDiv.className = 'modal-quiz-option';
+                            optDiv.textContent = opt;
+                            optDiv.addEventListener('click', function() {
+                                if (qDiv.dataset.answered === 'true') return;
+                                if (selected.has(oi)) {
+                                    selected.delete(oi);
+                                    optDiv.classList.remove('selected');
+                                } else {
+                                    selected.add(oi);
+                                    optDiv.classList.add('selected');
+                                }
+                            });
+                            optionsDiv.appendChild(optDiv);
+                        });
+                        const submitBtn = document.createElement('button');
+                        submitBtn.className = 'modal-quiz-submit';
+                        submitBtn.textContent = '提交答案';
+                        submitBtn.addEventListener('click', function() {
+                            if (qDiv.dataset.answered === 'true') return;
+                            qDiv.dataset.answered = 'true';
+                            const correctAns = new Set(q.answer);
+                            const isCorrect = selected.size === correctAns.size && [...selected].every(s => correctAns.has(s));
+                            optionsDiv.querySelectorAll('.modal-quiz-option').forEach(optDiv => {
+                                const idx = [...optionsDiv.children].indexOf(optDiv);
+                                if (correctAns.has(idx)) optDiv.classList.add('correct');
+                                else if (selected.has(idx)) optDiv.classList.add('wrong');
+                            });
+                            if (isCorrect) {
+                                playSuccessSound();
+                            } else {
+                                const hint = document.createElement('div');
+                                hint.className = 'modal-quiz-feedback wrong';
+                                hint.textContent = q.hint || '回答错误';
+                                qDiv.appendChild(hint);
+                            }
+                        });
+                        qDiv.appendChild(submitBtn);
+                    }
+                    qDiv.appendChild(optionsDiv);
+                    container.appendChild(qDiv);
+                });
+            }
+
+            // 匹配挑战（拖拽+右侧记录）
+            function renderMatchGame() {
+                const mt = document.getElementById('match-theories');
+                const ma = document.getElementById('match-authors');
+                const recordList = document.getElementById('match-record-list');
+                mt.innerHTML = ''; ma.innerHTML = ''; recordList.innerHTML = '<p style="text-align:center;color:var(--text-muted);font-size:.8rem;">暂无匹配</p>';
+                matchScore = 0;
+                document.getElementById('match-score').textContent = '匹配进度：0 / 9';
+                const shuffledTheories = [...theoriesData].sort(() => Math.random() - 0.5);
+                const shuffledAuthors = [...theoriesData].sort(() => Math.random() - 0.5);
+                shuffledTheories.forEach(t => {
+                    const d = document.createElement('div');
+                    d.className = 'match-item';
+                    d.setAttribute('draggable', 'true');
+                    d.setAttribute('data-match-id', t.id);
+                    d.setAttribute('data-match-type', 'theory');
+                    d.textContent = `${t.icon} ${t.title}`;
+                    d.addEventListener('dragstart', function(e) { e.dataTransfer.setData('text/plain', t.id); this.classList.add('selected'); });
+                    d.addEventListener('dragend', function() { this.classList.remove('selected'); });
+                    mt.appendChild(d);
+                });
+                shuffledAuthors.forEach(t => {
+                    const d = document.createElement('div');
+                    d.className = 'match-item';
+                    d.setAttribute('data-match-id', t.id);
+                    d.setAttribute('data-match-type', 'author');
+                    d.textContent = t.author;
+                    d.addEventListener('dragover', function(e) { e.preventDefault(); });
+                    d.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
+                        const targetId = parseInt(this.getAttribute('data-match-id'));
+                        const theoryEl = document.querySelector(`.match-item[data-match-type="theory"][data-match-id="${draggedId}"]`);
+                        if (draggedId === targetId) {
+                            if (!this.classList.contains('matched') && !theoryEl.classList.contains('matched')) {
+                                this.classList.add('matched'); theoryEl.classList.add('matched');
+                                matchScore++;
+                                document.getElementById('match-score').textContent = `匹配进度：${matchScore} / 9`;
+                                // 添加记录
+                                const recordItem = document.createElement('div');
+                                recordItem.className = 'match-record-item';
+                                recordItem.innerHTML = `<span class="theory">${theoryEl.textContent}</span><span class="author">${this.textContent}</span>`;
+                                if (recordList.querySelector('p')) recordList.innerHTML = '';
+                                recordList.appendChild(recordItem);
+                                if (matchScore === 9) setTimeout(() => alert('🎉 完美匹配！'), 300);
+                            }
+                        } else {
+                            this.classList.add('wrong'); theoryEl.classList.add('wrong');
+                            setTimeout(() => { this.classList.remove('wrong'); theoryEl.classList.remove('wrong'); }, 600);
+                        }
+                    });
+                    ma.appendChild(d);
+                });
+            }
+            document.getElementById('match-reset').addEventListener('click', renderMatchGame);
+
+            // 知识测验（10道）
+            const selectedQuizQuestions = [
+                { q: '交互影响距离理论的三个核心变量是？', options: ['对话、结构、自主性', '互动、内容、评价', '时间、地点、技术', '动机、策略、反馈'], answer: 0, hint: '关注师生互动和课程设计。' },
+                { q: '联通主义认为知识存在于哪里？', options: ['个体头脑中', '网络连接中', '教科书中', '教师经验中'], answer: 1, hint: '知识是动态分散的。' },
+                { q: 'ADDIE模型包含几个阶段？', options: ['3个', '4个', '5个', '6个'], answer: 2, hint: '每个字母代表一个阶段。' },
+                { q: '认知负荷理论关注哪种记忆？', options: ['长期记忆', '工作记忆', '感觉记忆', '语义记忆'], answer: 1, hint: '一次处理的信息量有限。' },
+                { q: '探究社区模型不包括哪种存在？', options: ['认知存在', '社会存在', '教学存在', '情感存在'], answer: 3, hint: '三种存在都直接相关。' },
+                { q: '远程交互模型是谁提出的？', options: ['陈丽', '穆尔', '基更', '加里森'], answer: 0, hint: '中国远程教育学者。' },
+                { q: '学习对话框架强调学习是什么？', options: ['对话', '记忆', '模仿', '训练'], answer: 0, hint: '多种交流互动。' },
+                { q: '教与学再度整合主要解决什么？', options: ['时空分离', '内容过多', '动机不足', '设备落后'], answer: 0, hint: '远程教育最大挑战。' },
+                { q: '首要教学原理的中心是什么？', options: ['真实问题', '技术工具', '教师讲授', '学习目标'], answer: 0, hint: '围绕问题展开设计。' },
+                { q: '探究社区中教学存在的作用？', options: ['提供社交空间', '设计和引导学习', '营造情感氛围', '提供技术平台'], answer: 1, hint: '关注学习设计和指导。' }
+            ];
+
+            function renderQuiz() {
+                const container = document.getElementById('quiz-container');
+                const resultEl = document.getElementById('quiz-result');
+                const resetBtn = document.getElementById('quiz-reset');
+                container.innerHTML = ''; resultEl.style.display = 'none'; resetBtn.style.display = 'none';
+                quizAttempts = {}; quizScore = 0; quizTotal = selectedQuizQuestions.length;
+                selectedQuizQuestions.forEach((q, qi) => {
+                    quizAttempts[qi] = { attempted: false, firstCorrect: false, score: 0 };
+                    const div = document.createElement('div');
+                    div.className = 'quiz-question';
+                    div.setAttribute('data-quiz-id', qi);
+                    div.innerHTML = `<div class="quiz-question-header"><span class="quiz-question-number">${qi + 1}</span>${q.q}</div>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'quiz-options';
+                    q.options.forEach((opt, oi) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'quiz-option';
+                        btn.textContent = opt;
+                        btn.addEventListener('click', () => handleQuizAnswer(qi, oi, q.answer, q.hint, btn, div));
+                        optionsDiv.appendChild(btn);
+                    });
+                    div.appendChild(optionsDiv);
+                    const hintEl = document.createElement('div');
+                    hintEl.className = 'quiz-hint'; hintEl.textContent = q.hint;
+                    div.appendChild(hintEl);
+                    container.appendChild(div);
+                });
+            }
+
+            function handleQuizAnswer(qi, selected, correct, hintText, btn, qDiv) {
+                const attempt = quizAttempts[qi];
+                if (attempt.firstCorrect) return;
+                if (!attempt.attempted) {
+                    attempt.attempted = true;
+                    if (selected === correct) {
+                        attempt.firstCorrect = true; attempt.score = 2; quizScore += 2;
+                        btn.classList.add('correct');
+                        qDiv.querySelectorAll('.quiz-option').forEach(opt => opt.classList.add('disabled'));
+                        const hintEl = qDiv.querySelector('.quiz-hint'); if (hintEl) hintEl.classList.remove('show');
+                    } else {
+                        attempt.firstCorrect = false; attempt.score = 0;
+                        btn.classList.add('wrong');
+                        const hintEl = qDiv.querySelector('.quiz-hint'); if (hintEl) hintEl.classList.add('show');
+                    }
+                } else {
+                    if (selected === correct) {
+                        qDiv.querySelectorAll('.quiz-option').forEach(opt => { opt.classList.remove('wrong'); opt.classList.add('disabled'); });
+                        btn.classList.add('correct');
+                        const hintEl = qDiv.querySelector('.quiz-hint'); if (hintEl) hintEl.classList.remove('show');
+                    } else {
+                        qDiv.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('wrong'));
+                        btn.classList.add('wrong');
+                        const hintEl = qDiv.querySelector('.quiz-hint'); if (hintEl) hintEl.classList.add('show');
+                    }
+                }
+                const allAttempted = Object.values(quizAttempts).every(a => a.attempted);
+                if (allAttempted) {
+                    const resultEl = document.getElementById('quiz-result');
+                    const resetBtn = document.getElementById('quiz-reset');
+                    const maxScore = quizTotal * 2;
+                    let comment = quizScore === maxScore ? '🌟 完美！你对远程教育理论掌握得非常扎实！' : quizScore >= 16 ? '👏 优秀！继续保持！' : quizScore >= 12 ? '👍 良好！再复习一下会更好！' : quizScore >= 8 ? '📖 继续加油！建议回顾卡片内容。' : '💪 需要更多学习，建议重新阅读理论卡片。';
+                    resultEl.textContent = `🏆 得分：${quizScore} / ${maxScore} 分 | ${comment}`;
+                    resultEl.style.display = 'block';
+                    resetBtn.style.display = 'block';
+                    const studentName = localStorage.getItem('studentName') || '匿名';
+                    const studentId = localStorage.getItem('studentId') || '';
+                    leaderboardScores.push({ name: studentName, id: studentId, score: quizScore, max: maxScore, date: new Date().toLocaleString() });
+                    if (leaderboardScores.length > 20) leaderboardScores = leaderboardScores.slice(-20);
+                    saveLeaderboard(); renderLeaderboard();
+                    // 完成知识测验后发送成绩
+                    sendDataToServer({
+                        type: 'quiz',
+                        studentId: localStorage.getItem('studentId'),
+                        score: quizScore,
+                        total: maxScore,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            }
+
+            document.getElementById('quiz-reset').addEventListener('click', renderQuiz);
+
+            function renderLeaderboard() {
+                const lb = document.getElementById('leaderboard');
+                if (!lb) return;
+                if (leaderboardScores.length === 0) { lb.innerHTML = '<h3>🏆 排行榜</h3><p style="text-align:center;color:var(--text-muted);font-size:.8rem;">暂无记录</p>'; return; }
+                const sorted = [...leaderboardScores].sort((a, b) => (b.score / b.max) - (a.score / a.max) || b.score - a.score);
+                let html = '<h3>🏆 排行榜</h3>';
+                sorted.forEach((item, i) => {
+                    const percent = item.max > 0 ? Math.round((item.score / item.max) * 100) : 0;
+                    html += `<div class="leaderboard-item"><div class="rank">${i + 1}</div><div style="flex:1;margin-left:8px;"><div style="font-weight:600;">${item.name} (${item.id})</div><div class="detail">${item.date}</div></div><div class="score">${item.score}/${item.max} (${percent}%)</div></div>`;
+                });
+                lb.innerHTML = html;
+            }
+
+            // 时间线
+            function renderTimeline() {
+                const wrapper = document.getElementById('timeline-horizontal-wrapper');
+                wrapper.innerHTML = '';
+                const container = document.createElement('div');
+                container.className = 'timeline-svg-container';
+                const svgNS = 'http://www.w3.org/2000/svg';
+                const svg = document.createElementNS(svgNS, 'svg');
+                svg.setAttribute('class', 'timeline-svg');
+                svg.setAttribute('viewBox', '0 0 1200 480');
+                const path = document.createElementNS(svgNS, 'path');
+                path.setAttribute('d', 'M 50 240 C 200 50, 400 430, 600 240 C 800 50, 1000 430, 1150 240');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'rgba(74,158,255,0.5)');
+                path.setAttribute('stroke-width', '3');
+                path.setAttribute('stroke-dasharray', '8 4');
+                svg.appendChild(path);
+                container.appendChild(svg);
+                const years = ['1972','1975','1986','1988','2000','2002','2004','2005','2002'];
+                const titles = ['交互影响距离理论','ADDIE模型','教与学再度整合','认知负荷理论','探究社区理论模型','首要教学原理','远程交互模型','联通主义学习理论','学习对话框架'];
+                const authors = ['迈克尔·穆尔','佛罗里达州立大学','德斯蒙德·基更','约翰·斯威勒','兰迪·加里森','戴维·梅里尔','陈丽','乔治·西蒙斯','戴安娜·罗瑞兰德'];
+                const details = ['对话、结构与自主性三个变量决定交互距离。','分析、设计、开发、实施、评估五阶段循环迭代。','远程教育的核心挑战是教与学的时空分离。','工作记忆有限，减少外在负荷。','认知、社会、教学三种存在共同支撑。','以问题为中心的五阶段教学。','操作、信息、概念交互三层次递进。','学习发生在网络连接之中。','学习是一种对话过程。'];
+                const total = years.length;
+                const startX = 50, endX = 1150;
+                const step = (endX - startX) / (total - 1);
+                years.forEach((year, i) => {
+                    const x = startX + i * step;
+                    const tParam = i / (total - 1);
+                    const y = 240 + 170 * Math.sin(tParam * Math.PI * 2);
+                    const node = document.createElement('div');
+                    node.className = 'timeline-node-item';
+                    node.style.left = x + 'px';
+                    node.style.top = y + 'px';
+                    node.innerHTML = `<div class="timeline-node-dot"></div><div class="timeline-node-label"><span class="year">${year}</span> ${titles[i]}<br><span style="font-size:.65rem;color:var(--text-muted);">${authors[i]}</span><div class="timeline-node-detail">${details[i]}</div></div>`;
+                    node.addEventListener('click', function() { this.classList.toggle('expanded'); });
+                    container.appendChild(node);
+                });
+                wrapper.appendChild(container);
+            }
+
+            // 导航
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const panel = this.getAttribute('data-panel');
+                    if (panel === 'random') { randomReview(); return; }
+                    switchPanel(panel);
+                });
+            });
+            function switchPanel(panel) {
+                currentPanel = panel;
+                document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.sidebar-btn[data-panel="${panel}"]`).classList.add('active');
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + panel).classList.add('active');
+                const titles = { cards: '📚 理论卡片', match: '🧩 匹配挑战', quiz: '📝 知识测验', timeline: '📅 时间线' };
+                document.getElementById('main-title').textContent = titles[panel] || '📚 理论卡片';
+                if (panel === 'match') renderMatchGame();
+                if (panel === 'quiz') { renderQuiz(); renderLeaderboard(); }
+                if (panel === 'timeline') renderTimeline();
+            }
+            function randomReview() {
+                const unlearned = theoriesData.filter(t => !learnedTheories.has(t.id));
+                if (unlearned.length === 0) { alert('🎉 所有理论都已学习完毕！'); return; }
+                const t = unlearned[Math.floor(Math.random() * unlearned.length)];
+                switchPanel('cards');
+                const wrapper = document.querySelector(`.card-wrapper[data-theory-id="${t.id}"]`);
+                if (wrapper) { const card = wrapper.querySelector('.card'); if (!card.classList.contains('flipped')) { card.classList.add('flipped'); if (!lastFlipTimestamps[t.id]) lastFlipTimestamps[t.id] = Date.now(); } wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            }
+            document.getElementById('btn-random-sidebar').addEventListener('click', randomReview);
+            document.getElementById('btn-particle-toggle').addEventListener('click', function() {
+                particlesEnabled = !particlesEnabled;
+                document.getElementById('particles-container').classList.toggle('hidden', !particlesEnabled);
+                localStorage.setItem(STORAGE_KEY_PARTICLES, particlesEnabled ? 'true' : 'false');
+                this.classList.toggle('active', !particlesEnabled);
+                this.textContent = particlesEnabled ? '✨ 粒子' : '🌫️ 粒子';
+            });
+            document.getElementById('btn-reset-nav').addEventListener('click', function() {
+                if (confirm('确定要重置所有学习进度、笔记和时长统计吗？')) {
+                    learnedTheories.clear(); notes = {}; studyTimes = {};
+                    theoriesData.forEach(t => { studyTimes[t.id] = 0; lastFlipTimestamps[t.id] = Date.now(); });
+                    saveProgress(); saveNotes(); saveStudyTimes(); hasShownCompletion = false; renderCards(); updateProgressUI();
+                }
+            });
+            document.getElementById('btn-close-banner').addEventListener('click', function() { document.getElementById('completion-overlay').classList.remove('show'); document.getElementById('completion-banner').classList.remove('show'); });
+            document.getElementById('completion-overlay').addEventListener('click', function() { this.classList.remove('show'); document.getElementById('completion-banner').classList.remove('show'); });
+
+            loadData(); renderCards(); updateProgressUI();
+            if (learnedTheories.size === theoriesData.length) hasShownCompletion = true;
+            switchPanel('cards');
+        }
+    </script>
+</body>
+</html>
